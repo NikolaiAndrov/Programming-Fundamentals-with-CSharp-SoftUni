@@ -1,0 +1,46 @@
+﻿using System;
+using System.Linq;
+using System.Collections.Generic;
+public class Program
+{
+    public static void Main()
+    {
+        var firstPlayer = Console.ReadLine()
+            .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+            .Select(int.Parse)
+            .ToList();
+
+        var secondPlayer = Console.ReadLine()
+            .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+            .Select(int.Parse)
+            .ToList();
+
+        while (firstPlayer.Count > 0 && secondPlayer.Count > 0)
+        {
+            if (firstPlayer[0] > secondPlayer[0])
+            {
+                firstPlayer.Add(firstPlayer[0]);
+                firstPlayer.Add(secondPlayer[0]);
+            }
+            else if (secondPlayer[0] > firstPlayer[0])
+            {
+                secondPlayer.Add(secondPlayer[0]);
+                secondPlayer.Add(firstPlayer[0]);
+            }
+
+            firstPlayer.RemoveAt(0);
+            secondPlayer.RemoveAt(0);
+        }
+
+        if (firstPlayer.Count > secondPlayer.Count)
+        {
+            var sum = firstPlayer.Sum();
+            Console.WriteLine($"First player wins! Sum: {sum}");
+        }
+        else
+        {
+            var sum = secondPlayer.Sum();
+            Console.WriteLine($"Second player wins! Sum: {sum}");
+        }
+    }
+}
