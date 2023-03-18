@@ -1,49 +1,31 @@
-﻿using System.Text.RegularExpressions;
+using System.Text;
+using System.Text.RegularExpressions;
 
 public class StartUp
 {
     public static void Main()
     {
-        string text = Console.ReadLine();
-
-        Dictionary<string, long> emojis = new Dictionary<string, long>();
-
-        long threshold = GetCoolThreshold(text);
-
-        GetEmojisAndValues(text, emojis);
-
-        PrintEmojis(emojis, threshold);
-    }
-
-    static void PrintEmojis(Dictionary<string, long> emojis, long threshold)
-    {
-        Console.WriteLine($"Cool threshold: {threshold}");
-        Console.WriteLine($"{emojis.Count} emojis found in the text. The cool ones are:");
-
-        foreach (var emoji in emojis.Where(x => x.Value >= threshold))
-        {
-            Console.WriteLine(emoji.Key);
-        }
-    }
-    static void GetEmojisAndValues(string text, Dictionary<string, long> emojis)
-    {
         string pattern = @"(::|\*\*)(?<emoji>[A-Z][a-z]{2,})\1";
         Regex regex = new Regex(pattern);
-        MatchCollection matches = regex.Matches(text);
 
-        foreach (Match match in matches)
+        string input = Console.ReadLine();
+        long threshold = GetThreshold(input);
+        MatchCollection matches = regex.Matches(input);
+
+        Console.WriteLine($"Cool threshold: {threshold}");
+        Console.WriteLine($"{matches.Count} emojis found in the text. The cool ones are:");
+
+        foreach(Match match in matches)
         {
-            if (match.Success)
-            {
-                long value = GetEmojiValue(match.Groups["emoji"].Value);
+            long value = GetEmojiValue(match.Groups["emoji"].Value);
 
-                if (!emojis.ContainsKey(match.Value))
-                {
-                    emojis[match.Value] = value;
-                }
+            if(value >= threshold)
+            {
+                Console.WriteLine(match.Value);
             }
         }
     }
+
     static long GetEmojiValue(string emoji)
     {
         long value = 0;
@@ -55,16 +37,19 @@ public class StartUp
 
         return value;
     }
-    static long GetCoolThreshold(string text)
+    static long GetThreshold(string input)
     {
         string pattern = @"\d";
         Regex regex = new Regex(pattern);
-        MatchCollection matches = regex.Matches(text);
+        MatchCollection matches = regex.Matches(input);
         long threshold = 1;
 
         foreach (Match match in matches)
         {
-            threshold *= int.Parse(match.Value);
+            if (match.Success)
+            {
+                threshold *= int.Parse(match.Value);
+            }
         }
 
         return threshold;
