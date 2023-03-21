@@ -1,38 +1,28 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Collections.Generic;
 public class StartUp
 {
     public static void Main()
     {
-        var countries = new Dictionary<string, long>();
-        var countriesAndCities = new Dictionary<string, Dictionary<string, int>>();
-        AddPopulation(countries, countriesAndCities);
-        PrintCountriesCitiesAndPopulation(countries, countriesAndCities);
+        var placeAndPopulation = new Dictionary<string, Dictionary<string, long>>();
+        GetPlaceAndPopulation(placeAndPopulation);
+        PrintPlaceAndPopulation(placeAndPopulation);
     }
 
-    static void PrintCountriesCitiesAndPopulation(Dictionary<string, long> countries, Dictionary<string, Dictionary<string, int>> countriesAndCities)
+    static void PrintPlaceAndPopulation(Dictionary<string, Dictionary<string, long>> placeAndPopulation)
     {
-        foreach (var country in countries.OrderByDescending(x => x.Value))
+        foreach (var country in placeAndPopulation.OrderByDescending(x => x.Value.Values.Sum()))
         {
-            Console.WriteLine($"{country.Key} (total population: {country.Value})");
-            PrintCities(country.Key, countriesAndCities);
-        }
-    }
-    static void PrintCities(string countryNeeded, Dictionary<string, Dictionary<string, int>> countriesAndCities)
-    {
-        foreach (var country in countriesAndCities)
-        {
-            if (countryNeeded == country.Key)
+            Console.WriteLine($"{country.Key} (total population: {country.Value.Values.Sum()})");
+
+            foreach (var city in country.Value.OrderByDescending(x => x.Value))
             {
-                foreach(var city in country.Value.OrderByDescending(x => x.Value))
-                {
-                    Console.WriteLine($"=>{city.Key}: {city.Value}");
-                }
+                Console.WriteLine($"=>{city.Key}: {city.Value}");
             }
         }
     }
-    static void AddPopulation(Dictionary<string, long> countries, Dictionary<string, Dictionary<string, int>> countriesAndCities)
+    static void GetPlaceAndPopulation(Dictionary<string, Dictionary<string, long>> placeAndPopulation)
     {
         string input;
 
@@ -43,23 +33,17 @@ public class StartUp
             var country = populationInfo[1];
             var population = int.Parse(populationInfo[2]);
 
-            if (!countries.ContainsKey(country))
+            if (!placeAndPopulation.ContainsKey(country))
             {
-                countries[country] = 0;
-            }
-            countries[country] += population;
-
-            if (!countriesAndCities.ContainsKey(country))
-            {
-                countriesAndCities[country] = new Dictionary<string, int>();
-                
+                placeAndPopulation[country] = new Dictionary<string, long>();
             }
 
-            if (!countriesAndCities[country].ContainsKey(city))
+            if (!placeAndPopulation[country].ContainsKey(city))
             {
-                countriesAndCities[country][city] = 0;
+                placeAndPopulation[country][city] = 0;
             }
-            countriesAndCities[country][city] = population;
+
+            placeAndPopulation[country][city] = population;
         }
     }
 }
