@@ -1,36 +1,41 @@
-﻿using System.Text.RegularExpressions;
-
+using System.Text.RegularExpressions;
 public class StartUp
 {
     public static void Main()
     {
-        string pattern = @"(\#|\|)(?<food>[A-Za-z\s]+)\1(?<date>\d{2}\/\d{2}\/\d{2})\1(?<calories>\d+)\1";
+        string pattern = @"(#|\|)(?<product>[A-Za-z\s]+)\1(?<date>\d{2}\/\d{2}\/\d{2})\1(?<calories>\d+)\1";
         Regex regex = new Regex(pattern);
-
         string input = Console.ReadLine();
-
         MatchCollection matches = regex.Matches(input);
-        CalculateCalories(matches);
-        PrintFoodInfo(matches);
+
+        int days = CalculateCalories(matches);
+        Console.WriteLine($"You have food to last you for: {days} days!");
+        PrintProducts(matches);
     }
 
-    static void PrintFoodInfo(MatchCollection matches)
+    static void PrintProducts(MatchCollection matches)
     {
-        foreach (Match match in matches)
+        foreach(Match match in matches)
         {
-            Console.WriteLine($"Item: {match.Groups["food"].Value}, Best before: {match.Groups["date"].Value}, Nutrition: {match.Groups["calories"].Value}");
+            if(match.Success)
+            {
+                Console.WriteLine($"Item: {match.Groups["product"]}, Best before: {match.Groups["date"]}, Nutrition: {match.Groups["calories"]}");
+            }
         }
     }
-    static void CalculateCalories(MatchCollection matches)
+    static int CalculateCalories(MatchCollection matches)
     {
         int calories = 0;
-
+        
         foreach (Match match in matches)
         {
-            calories += int.Parse(match.Groups["calories"].Value);
+            if (match.Success)
+            {
+                calories += int.Parse(match.Groups["calories"].Value);
+            }
         }
 
         int days = calories / 2000;
-        Console.WriteLine($"You have food to last you for: {days} days!");
+        return days;
     }
 }
